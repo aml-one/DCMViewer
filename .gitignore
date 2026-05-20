@@ -1,0 +1,13 @@
+# Ignore research artifacts
+Stuff/
+
+# Local Python environment
+.venv/
+
+# Visual Studio and build outputs
+DCMViewer/.vs/
+DCMViewer/bin/
+DCMViewer/obj/
+
+# Temporary WPF generated project files
+DCMViewer/*_wpftmp.csproj
