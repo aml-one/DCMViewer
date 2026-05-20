@@ -6,6 +6,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <AssemblyName>AmL.DCMViewer</AssemblyName>
+    <MergeToSingleDll>false</MergeToSingleDll>
+    <SingleDllOutputDir>$(MSBuildProjectDirectory)\..\publish\single</SingleDllOutputDir>
+    <SingleDllOutputFile>$(SingleDllOutputDir)\AmL.DCMViewer.dll</SingleDllOutputFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,6 +43,7 @@
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.0" />
     <PackageReference Include="HelixToolkit.Wpf" Version="2.27.3" />
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.44" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
@@ -88,5 +93,27 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
+
+  <Target Name="CreateSingleMergedDll"
+          AfterTargets="Build"
+          Condition="'$(MergeToSingleDll)' == 'true'">
+    <ItemGroup>
+      <MergeAssemblies Include="$(TargetPath)" />
+      <MergeAssemblies Include="$(OutputPath)HelixToolkit.Wpf.dll" />
+      <MergeAssemblies Include="$(OutputPath)BouncyCastle.Cryptography.dll" />
+    </ItemGroup>
+
+    <MakeDir Directories="$(SingleDllOutputDir)" />
+
+    <ILRepack InputAssemblies="@(MergeAssemblies)"
+              OutputFile="$(SingleDllOutputFile)"
+              Internalize="true"
+              TargetKind="SameAsPrimaryAssembly"
+              Parallel="true"
+              DebugInfo="true" />
+
+    <Message Importance="High"
+             Text="Single merged DLL created: $(SingleDllOutputFile)" />
+  </Target>
 
 </Project>
