@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AmL.DCMViewer</name>
+    </assembly>
+    <members>
+        <member name="T:DCMViewer.App">
+            <summary>
+            App
+            </summary>
+        </member>
+        <member name="M:DCMViewer.App.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="M:DCMViewer.App.Main">
+            <summary>
+            Application Entry Point.
+            </summary>
+        </member>
+        <member name="T:DCMViewer.Controls.DcmViewerCanvasComponent">
+            <summary>
+            DcmViewerCanvasComponent
+            </summary>
+        </member>
+        <member name="M:DCMViewer.Controls.DcmViewerCanvasComponent.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:DCMViewer.MainWindow">
+            <summary>
+            Interaction logic for MainWindow.xaml
+            </summary>
+            <summary>
+            MainWindow
+            </summary>
+        </member>
+        <member name="M:DCMViewer.MainWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:DCMViewer.Services.MaterialPalette">
+            <summary>
+            Colors for a single named material/texture entry.
+            </summary>
+        </member>
+        <member name="M:DCMViewer.Services.MaterialPalette.#ctor(System.Windows.Media.Color,System.Windows.Media.Color,System.Windows.Media.Color)">
+            <summary>
+            Colors for a single named material/texture entry.
+            </summary>
+        </member>
+        <member name="T:DCMViewer.Services.MaterialLibrary">
+            <summary>
+            Named material library.  Add entries here to extend the texture list.
+            "Model"    - neutral gray for scan/jaw models (default).
+            "Zirconia" - warm ivory for tooth/restoration meshes.
+            "Emax"     - cool blueish porcelain look.
+            "Stone"    - stone model look.
+            "Gold"     - gold metal look.
+            "SLM"      - silver metal look.
+            "PMMA"     - yellowish plastic look.
+            "WAX"      - white matte wax look.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Services.MaterialLibrary.Names">
+            <summary>Ordered list of available texture names (for ComboBox binding).</summary>
+        </member>
+        <member name="M:DCMViewer.Services.MaterialLibrary.Get(System.String)">
+            <summary>Returns the palette for <paramref name="name"/>, or the default palette if not found.</summary>
+        </member>
+        <member name="M:DCMViewer.Services.MaterialLibrary.Contains(System.String)">
+            <summary>Returns true if the library contains an entry with this name.</summary>
+        </member>
+        <member name="T:DCMViewer.Services.ThreeShapeDecryptor">
+            <summary>
+            Wrapper for 3Shape encryption assemblies. It discovers decryptor DLLs,
+            finds supported Decrypt signatures via reflection, and tries them in rank order.
+            </summary>
+        </member>
+        <member name="M:DCMViewer.Services.ThreeShapeDecryptor.SetupSecurityBypass">
+            <summary>
+            Bypasses the 3Shape caller-identity check in ThreeShape.FileFormats.HpsAndDcm.dll.
+            The library's lG class has a one-time security check (lG.CI()) gated by a static
+            bool field bYY. Setting bYY = true before any instance is created skips the
+            certificate/process-name verification entirely.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.ViewModels.LoadedMeshItemViewModel.AppliedTextureName">
+            <summary>Name of the texture/material from <see cref="T:DCMViewer.Services.MaterialLibrary"/> currently applied to this mesh.</summary>
+        </member>
+        <member name="M:DCMViewer.ViewModels.LoadedMeshItemViewModel.SetMaterialPalette(DCMViewer.Services.MaterialPalette,System.String)">
+            <summary>
+            Replaces the diffuse and specular colors of this mesh with those from
+            <paramref name="palette"/>.  Call <see cref="M:DCMViewer.ViewModels.LoadedMeshItemViewModel.SetSpecularIntensity(System.Double)"/> afterwards
+            to re-apply the current finish level.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.ViewModels.MainViewModel.TextureOverrides">
+            <summary>
+            Per-filename texture overrides.  Key = filename (e.g. "teeth.dcm"), Value = texture name
+            from <see cref="T:DCMViewer.Services.MaterialLibrary"/> (e.g. "Zirconia").  Files not present here use the
+            metadata-heuristic then the <see cref="P:DCMViewer.ViewModels.MainViewModel.DefaultTextureName"/> fallback.
+            Populate this from the host application before or after loading files.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.ViewModels.MainViewModel.AvailableTextures">
+            <summary>All available texture names (for ComboBox binding).</summary>
+        </member>
+        <member name="P:DCMViewer.ViewModels.MainViewModel.CategoryOverrides">
+            <summary>
+            Per-filename category assignment. Key = filename (for example, "r1.dcm"),
+            Value = one of: model, scan, restoration, abutment.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.ViewModels.MainViewModel.DefaultTextureName">
+            <summary>
+            The fallback texture used for files with no explicit override and no metadata hint.
+            Changing this live re-colors all such already-loaded files.
+            </summary>
+        </member>
+        <member name="T:XamlGeneratedNamespace.GeneratedInternalTypeHelper">
+            <summary>
+            GeneratedInternalTypeHelper
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateInstance(System.Type,System.Globalization.CultureInfo)">
+            <summary>
+            CreateInstance
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.GetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            GetPropertyValue
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.SetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            SetPropertyValue
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateDelegate(System.Type,System.Object,System.String)">
+            <summary>
+            CreateDelegate
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.AddEventHandler(System.Reflection.EventInfo,System.Object,System.Delegate)">
+            <summary>
+            AddEventHandler
+            </summary>
+        </member>
+    </members>
+</doc>

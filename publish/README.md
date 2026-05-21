@@ -3,7 +3,9 @@
 ## Where To Find Things
 
 - Single-DLL deliverable (merged): `publish/single/AmL.DCMViewer.dll`
+- XML doc for IntelliSense (single-DLL package): `publish/single/AmL.DCMViewer.xml`
 - DLL: `publish/bin/AmL.DCMViewer.dll`
+- XML doc for IntelliSense (standard output): `publish/bin/AmL.DCMViewer.xml`
 - Dependency DLLs:
 	- `publish/bin/HelixToolkit.Wpf.dll`
 	- `publish/bin/BouncyCastle.Cryptography.dll`

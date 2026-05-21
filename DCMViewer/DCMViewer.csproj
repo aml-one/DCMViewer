@@ -7,6 +7,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <AssemblyName>AmL.DCMViewer</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
     <MergeToSingleDll>false</MergeToSingleDll>
     <SingleDllOutputDir>$(MSBuildProjectDirectory)\..\publish\single</SingleDllOutputDir>
     <SingleDllOutputFile>$(SingleDllOutputDir)\AmL.DCMViewer.dll</SingleDllOutputFile>
@@ -111,6 +113,11 @@
               TargetKind="SameAsPrimaryAssembly"
               Parallel="true"
               DebugInfo="true" />
+
+        <Copy SourceFiles="$(TargetDir)$(AssemblyName).xml"
+          DestinationFiles="$(SingleDllOutputDir)\$(AssemblyName).xml"
+          SkipUnchangedFiles="true"
+          Condition="Exists('$(TargetDir)$(AssemblyName).xml')" />
 
     <Message Importance="High"
              Text="Single merged DLL created: $(SingleDllOutputFile)" />
