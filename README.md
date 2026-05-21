@@ -24,7 +24,7 @@ AmL DCMViewer is built to inspect and present dental meshes quickly and clearly:
 ### 1) File loading and visualization
 
 - Supports drag-and-drop and file picker loading
-- Handles encrypted/metadata-rich DCM parsing via custom parser service
+- Handles metadata-rich DCM parsing via custom parser service; encrypted abutment files are not fully supported
 - Uses HelixToolkit WPF for 3D camera/navigation and rendering
 
 ### 2) Material and texture system
