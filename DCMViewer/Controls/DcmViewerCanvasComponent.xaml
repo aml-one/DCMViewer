@@ -17,7 +17,31 @@
             </RadialGradientBrush>
         </Grid.Background>
 
-        <Image Source="pack://application:,,,/Images/logo.png"
+        <Rectangle HorizontalAlignment="Left"
+                   Width="14"
+                   IsHitTestVisible="False"
+                   Panel.ZIndex="0">
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#FFF3F6F9" Offset="0" />
+                    <GradientStop Color="#00F3F6F9" Offset="1" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <Rectangle HorizontalAlignment="Right"
+                   Width="14"
+                   IsHitTestVisible="False"
+                   Panel.ZIndex="0">
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
+                    <GradientStop Color="#FFF3F6F9" Offset="0" />
+                    <GradientStop Color="#00F3F6F9" Offset="1" />
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <Image Source="pack://application:,,,/AmL.DCMViewer;component/Images/logo.png"
                MaxWidth="512"
                MaxHeight="512"
                Width="420"
