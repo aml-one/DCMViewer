@@ -8,40 +8,7 @@
              d:DesignHeight="700"
              d:DesignWidth="1000">
     <Grid x:Name="WatermarkCanvas">
-        <Grid.Background>
-            <RadialGradientBrush GradientOrigin="0.5,0.5" Center="0.5,0.5" RadiusX="0.8" RadiusY="0.8">
-                <GradientStop Color="#FFFFFFFF" Offset="0.0" />
-                <GradientStop Color="#FFF3F6F9" Offset="0.35" />
-                <GradientStop Color="#FFD3D7DA" Offset="0.7" />
-                <GradientStop Color="#FFB0B4B8" Offset="1.0" />
-            </RadialGradientBrush>
-        </Grid.Background>
-
-        <Rectangle HorizontalAlignment="Left"
-                   Width="14"
-                   IsHitTestVisible="False"
-                   Panel.ZIndex="0">
-            <Rectangle.Fill>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                    <GradientStop Color="#FFF3F6F9" Offset="0" />
-                    <GradientStop Color="#00F3F6F9" Offset="1" />
-                </LinearGradientBrush>
-            </Rectangle.Fill>
-        </Rectangle>
-
-        <Rectangle HorizontalAlignment="Right"
-                   Width="14"
-                   IsHitTestVisible="False"
-                   Panel.ZIndex="0">
-            <Rectangle.Fill>
-                <LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
-                    <GradientStop Color="#FFF3F6F9" Offset="0" />
-                    <GradientStop Color="#00F3F6F9" Offset="1" />
-                </LinearGradientBrush>
-            </Rectangle.Fill>
-        </Rectangle>
-
-        <Image Source="pack://application:,,,/AmL.DCMViewer;component/Images/logo.png"
+        <Image x:Name="LogoImage"
                MaxWidth="512"
                MaxHeight="512"
                Width="420"
@@ -53,7 +20,8 @@
                IsHitTestVisible="False"
                Panel.ZIndex="0" />
 
-        <TextBlock Text="AmL"
+        <TextBlock x:Name="WatermarkTextBlock"
+                   Text="AmL"
                    FontSize="80"
                    FontWeight="SemiBold"
                    Foreground="#FFB8A35C"

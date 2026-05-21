@@ -123,6 +123,13 @@ public partial class MainWindow : Window
 
     private void Window_PreviewDragOver(object sender, DragEventArgs e)
     {
+        if (!_viewModel.IsExternalFileDropEnabled)
+        {
+            e.Effects = DragDropEffects.None;
+            e.Handled = true;
+            return;
+        }
+
         if (e.Data.GetDataPresent(DataFormats.FileDrop))
         {
             e.Effects = DragDropEffects.Copy;
@@ -136,6 +143,11 @@ public partial class MainWindow : Window
 
     private async void Window_Drop(object sender, DragEventArgs e)
     {
+        if (!_viewModel.IsExternalFileDropEnabled)
+        {
+            return;
+        }
+
         if (!e.Data.GetDataPresent(DataFormats.FileDrop))
         {
             return;

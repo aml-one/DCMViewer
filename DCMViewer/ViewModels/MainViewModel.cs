@@ -56,6 +56,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private bool _abutmentGroupVisible = true;
     private double _restorationGroupOpacity = 1.0;
     private double _abutmentGroupOpacity = 1.0;
+    private bool _isExternalFileDropEnabled = true;
 
     public MainViewModel(DcmParser parser)
     {
@@ -94,6 +95,25 @@ public sealed class MainViewModel : INotifyPropertyChanged
     /// Value = one of: model, scan, restoration, abutment.
     /// </summary>
     public Dictionary<string, string> CategoryOverrides { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Enables or disables drag-and-drop loading of external files (.dcm/.stl/.xml).
+    /// Set to false when hosting the viewer in apps that must block user file drops.
+    /// </summary>
+    public bool IsExternalFileDropEnabled
+    {
+        get => _isExternalFileDropEnabled;
+        set
+        {
+            if (_isExternalFileDropEnabled == value)
+            {
+                return;
+            }
+
+            _isExternalFileDropEnabled = value;
+            OnPropertyChanged();
+        }
+    }
 
     public bool HasRestorationGroup => _loadedFiles.Any(item => !item.IsLoadFailed && item.Category == MeshCategory.Restoration);
 

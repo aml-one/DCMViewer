@@ -88,3 +88,65 @@ Current material/texture options are:
 - `SLM`
 - `PMMA`
 - `WAX`
+
+## 5) Disable external drag-and-drop loading
+
+If your host application should not allow users to drag/drop files onto the viewer,
+set this flag on `MainViewModel`:
+
+```csharp
+viewModel.IsExternalFileDropEnabled = false;
+```
+
+When `false`, `.dcm/.stl/.xml` file drops are ignored.
+
+## 6) Reusable component customization options
+
+If you host `DcmViewerCanvasComponent` in another app, you can customize background,
+logo, and watermark text through component properties.
+
+### Gradient options
+
+- `GradientMode`
+  - `Radial`
+  - `LinearHorizontal`
+  - `LinearVertical`
+- `GradientStartColor`
+- `GradientMidColor`
+- `GradientMidOuterColor`
+- `GradientOuterColor`
+
+### Logo options
+
+- `IsLogoVisible` (true/false)
+- `LogoSource` (replace logo image)
+
+### Watermark text options
+
+- `WatermarkText`
+- `WatermarkTextColor`
+- `WatermarkTextFontSize`
+
+### XAML example
+
+```xml
+<dcm:DcmViewerCanvasComponent
+    GradientMode="LinearHorizontal"
+    GradientStartColor="#FFFFFFFF"
+    GradientMidColor="#FFF3F6F9"
+    GradientMidOuterColor="#FFD3D7DA"
+    GradientOuterColor="#FFB0B4B8"
+    IsLogoVisible="True"
+    WatermarkText="AmL"
+    WatermarkTextColor="#FFB8A35C"
+    WatermarkTextFontSize="80" />
+```
+
+### Replace logo from code
+
+```csharp
+using System;
+using System.Windows.Media.Imaging;
+
+viewerCanvas.LogoSource = new BitmapImage(new Uri(@"C:\assets\custom-logo.png"));
+```

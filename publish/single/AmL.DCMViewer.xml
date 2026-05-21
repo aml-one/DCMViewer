@@ -115,6 +115,12 @@
             Value = one of: model, scan, restoration, abutment.
             </summary>
         </member>
+        <member name="P:DCMViewer.ViewModels.MainViewModel.IsExternalFileDropEnabled">
+            <summary>
+            Enables or disables drag-and-drop loading of external files (.dcm/.stl/.xml).
+            Set to false when hosting the viewer in apps that must block user file drops.
+            </summary>
+        </member>
         <member name="P:DCMViewer.ViewModels.MainViewModel.DefaultTextureName">
             <summary>
             The fallback texture used for files with no explicit override and no metadata hint.
