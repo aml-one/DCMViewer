@@ -493,6 +493,17 @@
                               Height="34"
                               ItemsSource="{Binding AvailableTextures}"
                               SelectedItem="{Binding DefaultTextureName, Mode=TwoWay}" />
+
+                    <TextBlock Text="Weld tol:"
+                               VerticalAlignment="Center"
+                               Foreground="#FF3A4A5A"
+                               FontSize="13"
+                               Margin="14,0,8,0" />
+                    <TextBox Width="84"
+                             Height="34"
+                             VerticalContentAlignment="Center"
+                             Text="{Binding WeldedUnionTolerance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=F5}"
+                             ToolTip="Tolerance used by 'welded union STL' export. Smaller = stricter, larger = more aggressive weld." />
                 </StackPanel>
             </Grid>
         </Border>
@@ -818,6 +829,22 @@
                                Height="24"
                                Stretch="Uniform" />
                     </Button>
+                        <Button Style="{StaticResource IconButton}"
+                            ToolTip="Export visible scans as welded union STL (touching points are welded)"
+                            Command="{Binding ExportWeldedUnionMeshesCommand}">
+                           <Image Source="Images/merge.png"
+                               Width="24"
+                               Height="24"
+                               Stretch="Uniform" />
+                        </Button>
+                            <Button Style="{StaticResource IconButton}"
+                                ToolTip="Export visible scans as single-component union STL (bridges disconnected shells when needed)"
+                                Command="{Binding ExportForceSingleUnionMeshesCommand}">
+                               <Image Source="Images/merge.png"
+                                   Width="24"
+                                   Height="24"
+                                   Stretch="Uniform" />
+                            </Button>
                     <Button Style="{StaticResource IconButton}"
                             ToolTip="Zoom to fit"
                             Click="ShowAllButton_Click">

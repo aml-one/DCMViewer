@@ -105,8 +105,12 @@ When `false`, `.dcm/.stl/.xml` file drops are ignored.
 If you host `DcmViewerCanvasComponent` in another app, you can customize background,
 logo, and watermark text through component properties.
 
+- `UseFullAppShell` (default `true`): embeds the full DCMViewer UI including toolbar/buttons/panels.
+  Set to `false` for canvas-only mode where the options below apply directly.
+
 ### Gradient options
 
+- `IsBackgroundTransparent` (true/false; when true host background shows through)
 - `GradientMode`
   - `Radial`
   - `LinearHorizontal`
@@ -118,6 +122,7 @@ logo, and watermark text through component properties.
 
 ### Logo options
 
+- `IsWatermarkVisible` (show/hide all watermark visuals: logo + text)
 - `IsLogoVisible` (true/false)
 - `LogoSource` (replace logo image)
 
@@ -131,6 +136,8 @@ logo, and watermark text through component properties.
 
 ```xml
 <dcm:DcmViewerCanvasComponent
+  IsWatermarkVisible="True"
+  IsBackgroundTransparent="False"
     GradientMode="LinearHorizontal"
     GradientStartColor="#FFFFFFFF"
     GradientMidColor="#FFF3F6F9"
@@ -142,6 +149,14 @@ logo, and watermark text through component properties.
     WatermarkTextFontSize="80" />
 ```
 
+  For a fully see-through canvas area:
+
+  ```xml
+  <dcm:DcmViewerCanvasComponent
+    IsBackgroundTransparent="True"
+    IsWatermarkVisible="False" />
+  ```
+
 ### Replace logo from code
 
 ```csharp
@@ -150,3 +165,71 @@ using System.Windows.Media.Imaging;
 
 viewerCanvas.LogoSource = new BitmapImage(new Uri(@"C:\assets\custom-logo.png"));
 ```
+
+## 7) STL export modes (combined vs welded union)
+
+The viewer now exposes three different export behaviors for visible meshes:
+
+- Separate STL export: one STL per visible mesh.
+- Combined STL export: one STL file containing all visible triangles, without geometry fusion.
+- Welded union STL export: one STL where vertices from touching meshes are welded by position tolerance.
+- Single-component union STL export: welded union plus automatic bridge geometry to connect remaining disconnected shells.
+
+### What welded union does
+
+Welded union is intended for workflows where multiple scans should become one connected object.
+
+- Input: all currently visible meshes.
+- Processing:
+  - Vertices are merged when they are within the weld tolerance (currently `0.001` in model units).
+  - Degenerate triangles created by welding are removed.
+  - Duplicate triangles with the same vertex triplet are removed.
+- Output: one STL mesh snapshot and a post-export connectivity summary.
+
+### Weld tolerance setting
+
+Welded union uses `MainViewModel.WeldedUnionTolerance`.
+
+- Default: `0.001`
+- Allowed range: `0.00001` to `1.0`
+- UI: top toolbar field labeled `Weld tol:`
+
+Usage from host code:
+
+```csharp
+viewModel.WeldedUnionTolerance = 0.0008;
+```
+
+Guidance:
+
+- Lower values reduce accidental over-welding.
+- Higher values increase the chance of fusing tiny gaps between touching scans.
+
+The status line reports:
+
+- source mesh count
+- output triangle count
+- output connected component count
+- weld tolerance
+
+### Important limitation
+
+Welded union is not a full constructive-solid-geometry boolean union.
+
+- It does connect touching parts by sharing welded vertices.
+- It does not perform volumetric inside/outside classification.
+- Internal coincident faces may remain if two parts overlap but do not share exactly matching triangulation.
+
+For scan cleanup and most "touching shells should become one object" scenarios, welded union is typically sufficient.
+For exact CAD boolean behavior, use a dedicated boolean mesh kernel.
+
+### Single-component union mode
+
+When welded union still leaves more than one connected component, single-component union adds small bridge tubes
+between disconnected components so the result becomes one connected shell for downstream tools.
+
+- Uses the same `WeldedUnionTolerance` setting.
+- Reports `bridges` count in status text.
+- Intended for manufacturing/export pipelines that require one connected object.
+
+Note: this mode intentionally modifies geometry by adding connector bridges. Use welded union mode when you must avoid any added geometry.

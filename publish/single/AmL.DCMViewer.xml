@@ -21,12 +21,127 @@
         </member>
         <member name="T:DCMViewer.Controls.DcmViewerCanvasComponent">
             <summary>
+            Reusable viewer canvas component that hosts the watermark background, Helix 3D viewport,
+            section-plane visuals, and measurement visuals for embedding in other WPF applications.
+            </summary>
+            <summary>
             DcmViewerCanvasComponent
+            </summary>
+        </member>
+        <member name="M:DCMViewer.Controls.DcmViewerCanvasComponent.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:DCMViewer.Controls.DcmViewerCanvasComponent"/> class.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.GradientMode">
+            <summary>
+            Gets or sets the background gradient layout mode.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.GradientStartColor">
+            <summary>
+            Gets or sets the innermost background gradient color.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.GradientMidColor">
+            <summary>
+            Gets or sets the inner-middle background gradient color.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.GradientMidOuterColor">
+            <summary>
+            Gets or sets the outer-middle background gradient color.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.GradientOuterColor">
+            <summary>
+            Gets or sets the outermost background gradient color.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.IsBackgroundTransparent">
+            <summary>
+            Gets or sets a value indicating whether the component background is fully transparent.
+            When true, host container background is visible through the canvas.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.IsLogoVisible">
+            <summary>
+            Gets or sets a value indicating whether the logo watermark image is shown.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.LogoSource">
+            <summary>
+            Gets or sets a custom logo image source. If null, the built-in embedded logo is used.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.WatermarkText">
+            <summary>
+            Gets or sets the watermark text displayed over the background.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.WatermarkTextColor">
+            <summary>
+            Gets or sets the watermark text color.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.WatermarkTextFontSize">
+            <summary>
+            Gets or sets the watermark text font size.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.Viewport3D">
+            <summary>
+            Gets the hosted Helix viewport for advanced host-side interaction.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.CuttingPlaneGroup">
+            <summary>
+            Gets the cutting-plane group used to apply section cuts to the model content.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.SectionPlaneModel">
+            <summary>
+            Gets the 3D model visual used for section-plane display.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.SectionPlaneOutline">
+            <summary>
+            Gets the outline visual used for the section-plane boundary.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.MeasurementLineVisual">
+            <summary>
+            Gets the measurement line visual used in the hosted 3D viewport.
+            </summary>
+        </member>
+        <member name="P:DCMViewer.Controls.DcmViewerCanvasComponent.MeasurementTextVisual">
+            <summary>
+            Gets the billboard text visual used for 3D measurement labels.
             </summary>
         </member>
         <member name="M:DCMViewer.Controls.DcmViewerCanvasComponent.InitializeComponent">
             <summary>
             InitializeComponent
+            </summary>
+        </member>
+        <member name="T:DCMViewer.Controls.ViewerBackgroundGradientMode">
+            <summary>
+            Supported background gradient layouts for <see cref="T:DCMViewer.Controls.DcmViewerCanvasComponent"/>.
+            </summary>
+        </member>
+        <member name="F:DCMViewer.Controls.ViewerBackgroundGradientMode.Radial">
+            <summary>
+            Radial gradient centered in the viewer area.
+            </summary>
+        </member>
+        <member name="F:DCMViewer.Controls.ViewerBackgroundGradientMode.LinearHorizontal">
+            <summary>
+            Linear gradient flowing from left to right.
+            </summary>
+        </member>
+        <member name="F:DCMViewer.Controls.ViewerBackgroundGradientMode.LinearVertical">
+            <summary>
+            Linear gradient flowing from top to bottom.
             </summary>
         </member>
         <member name="T:DCMViewer.MainWindow">

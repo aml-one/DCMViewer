@@ -73,6 +73,9 @@ xmlns:dcm="clr-namespace:DCMViewer.Controls;assembly=AmL.DCMViewer"
 
 `DcmViewerCanvasComponent` exposes these properties for host customization:
 
+- `UseFullAppShell` (default true; includes full app toolbar/buttons/panels)
+- `IsBackgroundTransparent` (when true, component background is transparent)
+- `IsWatermarkVisible` (show/hide logo + watermark text)
 - `GradientMode`:
 	- `Radial`
 	- `LinearHorizontal`
@@ -91,6 +94,8 @@ Example:
 
 ```xml
 <dcm:DcmViewerCanvasComponent
+	IsWatermarkVisible="True"
+	IsBackgroundTransparent="False"
 		GradientMode="LinearHorizontal"
 		GradientStartColor="#FFFDFEFE"
 		GradientMidColor="#FFF1F4F7"
@@ -101,6 +106,14 @@ Example:
 		WatermarkTextColor="#FF9A8748"
 		WatermarkTextFontSize="72" />
 ```
+
+	Fully see-through canvas:
+
+	```xml
+	<dcm:DcmViewerCanvasComponent
+		IsBackgroundTransparent="True"
+		IsWatermarkVisible="False" />
+	```
 
 To replace logo from code-behind:
 
@@ -139,3 +152,26 @@ Valid texture/material names are:
 - `SLM`
 - `PMMA`
 - `WAX`
+
+## STL export behaviors
+
+The viewer offers three STL export paths:
+
+- Export visible scans as separate STL files:
+	- Writes one STL per visible mesh.
+- Export visible scans as one merged STL:
+	- Writes one STL file but only concatenates triangles.
+	- Geometry remains multi-shell if inputs are disconnected.
+- Export visible scans as welded union STL:
+	- Writes one STL file after welding touching vertices (tolerance-based).
+	- Designed to convert touching meshes into one connected object.
+- Export visible scans as single-component union STL:
+	- Starts with welded union cleanup.
+	- If components are still disconnected, adds small bridge geometry to force one connected shell.
+	- Reports bridge count in status text.
+
+Current welded-union tolerance in the shipped implementation is `0.001` (model units).
+
+Note: welded union is not a full boolean CSG union. It welds touching geometry and removes exact duplicate triangles, but does not compute full solid inside/outside subtraction of overlapping volumes.
+
+Single-component union goes further by adding connector bridges when needed. This is useful for workflows that strictly require one connected shell, but it is geometry-modifying by design.

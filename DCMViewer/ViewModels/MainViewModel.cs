@@ -28,6 +28,8 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private readonly DcmParser _parser;
     private readonly RelayCommand _openFileCommand;
     private readonly RelayCommand _exportVisibleMeshesCommand;
+    private readonly RelayCommand _exportWeldedUnionMeshesCommand;
+    private readonly RelayCommand _exportForceSingleUnionMeshesCommand;
     private readonly RelayCommand _exportSeparatedMeshesCommand;
     private readonly RelayCommand _toggleFinishCommand;
     private readonly RelayCommand _toggleSectionModeCommand;
@@ -57,12 +59,15 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private double _restorationGroupOpacity = 1.0;
     private double _abutmentGroupOpacity = 1.0;
     private bool _isExternalFileDropEnabled = true;
+    private double _weldedUnionTolerance = 0.001;
 
     public MainViewModel(DcmParser parser)
     {
         _parser = parser;
         _openFileCommand = new RelayCommand(OpenFile, () => !IsBusy);
         _exportVisibleMeshesCommand = new RelayCommand(ExportVisibleMeshes, CanExportVisibleMeshes);
+        _exportWeldedUnionMeshesCommand = new RelayCommand(ExportWeldedUnionMeshes, CanExportVisibleMeshes);
+        _exportForceSingleUnionMeshesCommand = new RelayCommand(ExportForceSingleUnionMeshes, CanExportVisibleMeshes);
         _exportSeparatedMeshesCommand = new RelayCommand(ExportSeparatedMeshes, CanExportVisibleMeshes);
         _toggleFinishCommand = new RelayCommand(ToggleFinish);
         _toggleSectionModeCommand = new RelayCommand(ToggleSectionMode);
@@ -111,6 +116,26 @@ public sealed class MainViewModel : INotifyPropertyChanged
             }
 
             _isExternalFileDropEnabled = value;
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>
+    /// Tolerance used by welded-union STL export to weld touching vertices.
+    /// Unit is the model-space unit used by loaded meshes.
+    /// </summary>
+    public double WeldedUnionTolerance
+    {
+        get => _weldedUnionTolerance;
+        set
+        {
+            var clampedValue = Math.Clamp(value, 0.00001, 1.0);
+            if (Math.Abs(_weldedUnionTolerance - clampedValue) < 0.0000001)
+            {
+                return;
+            }
+
+            _weldedUnionTolerance = clampedValue;
             OnPropertyChanged();
         }
     }
@@ -209,6 +234,10 @@ public sealed class MainViewModel : INotifyPropertyChanged
     }
 
     public ICommand ExportVisibleMeshesCommand => _exportVisibleMeshesCommand;
+
+    public ICommand ExportWeldedUnionMeshesCommand => _exportWeldedUnionMeshesCommand;
+
+    public ICommand ExportForceSingleUnionMeshesCommand => _exportForceSingleUnionMeshesCommand;
 
     public ICommand ExportSeparatedMeshesCommand => _exportSeparatedMeshesCommand;
 
@@ -375,6 +404,8 @@ public sealed class MainViewModel : INotifyPropertyChanged
             OnPropertyChanged();
             _openFileCommand.RaiseCanExecuteChanged();
             _exportVisibleMeshesCommand.RaiseCanExecuteChanged();
+            _exportWeldedUnionMeshesCommand.RaiseCanExecuteChanged();
+            _exportForceSingleUnionMeshesCommand.RaiseCanExecuteChanged();
             _exportSeparatedMeshesCommand.RaiseCanExecuteChanged();
         }
     }
@@ -562,6 +593,8 @@ public sealed class MainViewModel : INotifyPropertyChanged
         var visibleTriangleCount = _loadedFiles.Where(item => item.IsVisible).Sum(item => item.TriangleCount);
         StatusText = $"Visible files: {_loadedFiles.Count(item => item.IsVisible):N0} | Vertices: {visibleVertexCount:N0} | Triangles: {visibleTriangleCount:N0}";
         _exportVisibleMeshesCommand.RaiseCanExecuteChanged();
+        _exportWeldedUnionMeshesCommand.RaiseCanExecuteChanged();
+        _exportForceSingleUnionMeshesCommand.RaiseCanExecuteChanged();
         _exportSeparatedMeshesCommand.RaiseCanExecuteChanged();
         OnPropertyChanged(nameof(HasRestorationGroup));
         OnPropertyChanged(nameof(HasAbutmentGroup));
@@ -572,6 +605,8 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private void LoadedFilesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         _exportVisibleMeshesCommand.RaiseCanExecuteChanged();
+        _exportWeldedUnionMeshesCommand.RaiseCanExecuteChanged();
+        _exportForceSingleUnionMeshesCommand.RaiseCanExecuteChanged();
         _exportSeparatedMeshesCommand.RaiseCanExecuteChanged();
         OnPropertyChanged(nameof(HasRestorationGroup));
         OnPropertyChanged(nameof(HasAbutmentGroup));
@@ -700,6 +735,102 @@ public sealed class MainViewModel : INotifyPropertyChanged
         catch (Exception ex)
         {
             StatusText = $"Failed to export mesh: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async void ExportWeldedUnionMeshes()
+    {
+        var snapshots = _loadedFiles
+            .Where(item => item.IsVisible && item.MeshGeometry is not null)
+            .Select(item => MeshExportService.CreateSnapshot(item.MeshGeometry!))
+            .ToList();
+
+        if (snapshots.Count == 0)
+        {
+            StatusText = "No visible mesh is available to export.";
+            return;
+        }
+
+        var dialog = new SaveFileDialog
+        {
+            Filter = "STL Mesh (*.stl)|*.stl",
+            DefaultExt = ".stl",
+            AddExtension = true,
+            OverwritePrompt = true,
+            FileName = "welded-union-mesh"
+        };
+
+        if (dialog.ShowDialog() != true)
+        {
+            return;
+        }
+
+        try
+        {
+            IsBusy = true;
+            StatusText = "Exporting welded union STL...";
+
+            var weldTolerance = WeldedUnionTolerance;
+            var result = await Task.Run(() => MeshExportService.ExportWeldedUnionStl(dialog.FileName, snapshots, weldTolerance));
+
+            StatusText =
+                $"Welded-union export completed: {result.SourceMeshCount:N0} source mesh(es), {result.OutputTriangleCount:N0} triangles, {result.OutputConnectedComponents:N0} connected component(s), removed {result.RemovedTriangleCount:N0} tiny triangles across {result.RemovedSmallComponentCount:N0} tiny component(s), tol={weldTolerance:G4}.";
+        }
+        catch (Exception ex)
+        {
+            StatusText = $"Failed to export welded union mesh: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async void ExportForceSingleUnionMeshes()
+    {
+        var snapshots = _loadedFiles
+            .Where(item => item.IsVisible && item.MeshGeometry is not null)
+            .Select(item => MeshExportService.CreateSnapshot(item.MeshGeometry!))
+            .ToList();
+
+        if (snapshots.Count == 0)
+        {
+            StatusText = "No visible mesh is available to export.";
+            return;
+        }
+
+        var dialog = new SaveFileDialog
+        {
+            Filter = "STL Mesh (*.stl)|*.stl",
+            DefaultExt = ".stl",
+            AddExtension = true,
+            OverwritePrompt = true,
+            FileName = "single-component-union-mesh"
+        };
+
+        if (dialog.ShowDialog() != true)
+        {
+            return;
+        }
+
+        try
+        {
+            IsBusy = true;
+            StatusText = "Exporting force-single-component union STL...";
+
+            var weldTolerance = WeldedUnionTolerance;
+            var result = await Task.Run(() => MeshExportService.ExportForceSingleComponentUnionStl(dialog.FileName, snapshots, weldTolerance));
+
+            StatusText =
+                $"Single-component union export completed: {result.SourceMeshCount:N0} source mesh(es), {result.OutputTriangleCount:N0} triangles, {result.OutputConnectedComponents:N0} connected component(s), removed {result.RemovedTriangleCount:N0} tiny triangles across {result.RemovedSmallComponentCount:N0} tiny component(s), bridges {result.AddedBridgeCount:N0}, tol={weldTolerance:G4}.";
+        }
+        catch (Exception ex)
+        {
+            StatusText = $"Failed to export single-component union mesh: {ex.Message}";
         }
         finally
         {
